@@ -11,11 +11,12 @@ $carros = [];
 $alugueis = [];
 
 do{
-
+"------------------\n";
 echo "1- Clientes\n";
 echo "2- Carros \n";
 echo "3- Alugueis\n";
-echo "4- SAIR\n";
+echo "0- SAIR\n";
+"-----------------\n";
 
 $entrada = readline("Escolha uma das opções:\n");
 
@@ -32,11 +33,14 @@ switch ($entrada){
     gerenciarAlugueis();
     break;
 
-    case '4':
+    case '0':
     echo "Saindo...\n";
     break;
 
     default:
     echo "Entrada inválida!\n";
 }
-}   while ($entrada !='0');
+
+} while ($entrada !='0');
+
+
