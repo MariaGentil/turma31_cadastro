@@ -3,8 +3,8 @@
 function gerenciarClientes()
 {
 
-echo "1- Listar cliente\n";
-echo "2- Cadastrar cliente\n";
+echo "1- Cadastrar cliente\n";
+echo "2- Listar cliente\n";
 echo "3- Excluir cliente\n";
 echo "0- Voltar ao menu\n";
 
@@ -20,7 +20,7 @@ switch ($opções){
     break;
 
     case '3':
-        excluirClientes();
+        ExcluirClientes();
     break;
 
     case '0':
@@ -33,7 +33,7 @@ switch ($opções){
 }
 }
 
-function cadastrarClientes()
+    function CadastrarClientes()
 {
     $nome = readline  ('Escreva o nome do cliente: ');
     $email = readline ('Escreva o email do cliente: ');
@@ -42,8 +42,7 @@ function cadastrarClientes()
         'id' => str_split( uniqid(),4)[2],
         'nome' => $nome,
         'email' => $email
-    ];
-
+];
     $jsonClientes = file_get_contents('./db/clientes.json');
     $clientes = json_decode($jsonClientes, true);
     
@@ -55,7 +54,7 @@ function cadastrarClientes()
     echo "Cliente registrado!\n";
 }
 
-function listarClientes()
+    function ListarClientes()
 {
     $jsonClientes= file_get_contents('./db/clientes.json');
     $clientes = json_decode($jsonClientes, true);
@@ -68,7 +67,7 @@ function listarClientes()
     echo "---------------------------\n";
 }
 
-function excluirClientes()
+    function ExcluirClientes()
 {
     $jsonClientes = file_get_contents('./db/clientes.json');
     $clientes = json_decode($jsonClientes, true);
@@ -76,15 +75,23 @@ function excluirClientes()
     $id = readline ("Digite o ID do cliente para ser excluído: ");
         
     $ex_clientes = [];
-    foreach ($clientes as $i){
-      if ($i['id'] != $id){
-        $ex_clientes[] = $i;
-      }
-    }
+    $encontrado = false;
 
+    foreach ($clientes as $i){
+    if ($i['id'] != $id){
+    $ex_clientes[] = $i;
+}   
+    else{
+    $encontrado = true;
+}
+}
+    if ($encontrado){
     $json = json_encode($ex_clientes, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE);
     file_put_contents('./db/clientes.json', $json);
 
-    echo  "Excluindo cliente " . $i['id']. "\n" . "Cliente excluído!\n";
-    
+    echo  "Cliente excluído!\n";
+}
+    else{
+    echo "Cliente não cadastrado!\n";
+}
 }
