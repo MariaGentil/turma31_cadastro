@@ -14,13 +14,5 @@
         "marca": "chevrolet",
         "inicio": "22\/06\/2025",
         "fim": "22\/06\/2026"
-    },
-    {
-        "id": "14d9",
-        "nome": "marcus",
-        "placa": "maewn23",
-        "marca": "etios",
-        "inicio": "12\/05\/25",
-        "fim": "12\/06\/25"
-    }
+    }   
 ]

@@ -92,14 +92,14 @@ switch ($opções){
     $cadastrado = true;
 }
 }
-    if ($cadastrado){
+    if ($cadastrado) {
 
     $json= json_encode($ex_alugueis, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE);
     file_put_contents('./db/alugueis.json',$json);
 
-    "Aluguel excluído!\n";
+    echo "Aluguel excluído!\n";
 }
     else{
-    "Aluguel não registrado!";
+    echo "Aluguel não registrado!";
 }
 }
