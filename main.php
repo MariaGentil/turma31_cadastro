@@ -6,6 +6,7 @@ include './modulos/alugueis/gerenciarAlugueis.php';
 
 echo "Bem vindo ao ALUCAR-D\n";
 
+$pdo = conn();
 $clientes =[];
 $carros = [];
 $alugueis = [];

@@ -1,5 +1,7 @@
 <?php
 
+require_once __DIR__ . '/../../conexao.php';
+
 function gerenciarCarros()
 {
 
@@ -35,66 +37,50 @@ switch ($opções){
 
     function CadastrarCarros()
 {
+    $pdo = conn();
     $marca = readline  ('Digite a marca do carro: ');
     $modelo = readline ('Digite o modelo do carro: ');
     $placa = readline  ('Digite a placa do carro: ');
     
     $carro =[
-        'Placa' => $placa,
+        'Marca' => $marca,
         'Modelo' => $modelo,
-        'Marca' => $marca
+        'Placa' => $placa
 ];
-    $jsonCarros = file_get_contents('./db/carros.json');
-    $carros = json_decode($jsonCarros, true);
-
-    $carros[] = $carro;
-    
-    $json = json_encode ($carros, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE);
-    file_put_contents('./db/carros.json', $json);
+    $pdo->query("INSERT INTO carros (marca, modelo, placa)
+                 VALUES ('$marca', '$modelo', '$placa')");
 
     echo "Carro registrado!\n";
 }
     
     function ListarCarros()
 {
-    $jsonCarros = file_get_contents('./db/carros.json');
-    $carros = json_decode($jsonCarros, true);
+    $pdo = conn();
+
+    $pdo->query("SELECT * FROM carros ");
 
     echo "---------------------------\n";
 
     
-    foreach ($carros as $v){
-    echo "Placa: " . $v['Placa'] . "| Modelo: " . $v['Modelo'] . " | Marca: " . $v['Marca'] . "\n";
+    foreach ($pdo as $v){
+    echo "Marca: " . $v['Marca'] . "| Modelo: " . $v['Modelo'] . " | Placa: " . $v['Placa'] . "\n";
 }
     echo "---------------------------\n";
 }
 
     function ExcluirCarros()
 {
-    $jsonCarros = file_get_contents('./db/carros.json');
-    $carros = json_decode($jsonCarros, true);
+    $pdo = conn();
 
-    $placa = readline('Digite a placa do cliente para ser excluído: ');
+    $id = readline('Digite o id do carro para ser excluído: ');
 
-    $ex_carro = [];
-    $register = false;
+   $resultado = $pdo->query("DELETE FROM carros WHERE id = '$id'");
 
-    foreach ($carros as $e){
-    if ($e['Placa'] != $placa){
-    $ex_carro[] = $e;
+   if($resultado->rowCount() >  0){
+       
+    echo "Carro excluído!\n";
 }
-    else{
-    $register = true;
-}
-}
-    if ($register){
-
-    $json= json_encode($ex_carro, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE);
-    file_put_contents('./db/carros.json',$json);
-
-    "Carro excluído!\n";
-}
-    else{
-    "Carro não registrado!";
+   else{
+    echo "Carro não excluído!\n";
 }
 }

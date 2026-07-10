@@ -1,5 +1,7 @@
 <?php
 
+require_once __DIR__ . '/../../conexao.php';
+
 function gerenciarClientes()
 {
 
@@ -35,63 +37,47 @@ switch ($opções){
 
     function CadastrarClientes()
 {
+    $pdo = conn();
+
     $nome = readline  ('Escreva o nome do cliente: ');
     $email = readline ('Escreva o email do cliente: ');
-
+    
     $cliente =[
-        'id' => str_split( uniqid(),4)[2],
         'nome' => $nome,
         'email' => $email
 ];
-    $jsonClientes = file_get_contents('./db/clientes.json');
-    $clientes = json_decode($jsonClientes, true);
-    
-    $clientes[] = $cliente;
-    
-    $json = json_encode($clientes, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE);
-    file_put_contents('./db/clientes.json', $json);
+    $pdo->query("INSERT INTO clientes (nome, email) 
+    VALUES ('$nome', '$email')");
 
     echo "Cliente registrado!\n";
 }
 
     function ListarClientes()
 {
-    $jsonClientes= file_get_contents('./db/clientes.json');
-    $clientes = json_decode($jsonClientes, true);
+    $pdo = conn();
+
+    $pdo->query("SELECT * FROM clientes");
     
     echo "---------------------------\n";
 
-    foreach ($clientes as $c){
-        echo "iD: " . $c['id'] . " | Nome: " . $c['nome'] . " | Email: " . $c['email'] . "\n";
-    }
+    foreach ($pdo as $p){
+        echo "iD: " . $p['id'] . " | Nome: " . $p['nome'] . " | Email: " . $p['email'] . "\n";
+}
     echo "---------------------------\n";
 }
 
     function ExcluirClientes()
 {
-    $jsonClientes = file_get_contents('./db/clientes.json');
-    $clientes = json_decode($jsonClientes, true);
+    $pdo = conn();
 
     $id = readline ("Digite o ID do cliente para ser excluído: ");
         
-    $ex_clientes = [];
-    $encontrado = false;
+    $result = $pdo->query("DELETE FROM clientes WHERE id = '$id' ");
 
-    foreach ($clientes as $i){
-    if ($i['id'] != $id){
-    $ex_clientes[] = $i;
-}   
-    else{
-    $encontrado = true;
-}
-}
-    if ($encontrado){
-    $json = json_encode($ex_clientes, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE);
-    file_put_contents('./db/clientes.json', $json);
-
-    echo  "Cliente excluído!\n";
+    if ($result->rowCount() > 0){
+        echo  "Cliente excluído!\n";
 }
     else{
-    echo "Cliente não cadastrado!\n";
+    echo  "Cliente não excluído!\n";
 }
 }

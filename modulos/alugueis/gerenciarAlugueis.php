@@ -1,5 +1,7 @@
 <?php
 
+require_once __DIR__ . '/../../conexao.php';
+
 function gerenciarAlugueis()
 {
 
@@ -24,82 +26,67 @@ switch ($opções){
     break;
 
     case '0':
-    echo "Voltando...\n";  
+        echo "Voltando...\n";  
     break;
     
     default:
-    echo "Entrada inválida!\n";
+        echo "Entrada inválida!\n";
     break;
 }
 }
 
     function CadastrarAlugueis()
 {
-    $nome = readline  ('Digite o nome do cliente: ');
-    $placa = readline ('Digite a placa do carro: ');
+    $pdo = conn();
+    
+    $nome_cliente = readline  ('Digite o nome do cliente: ');
     $marca = readline  ('Digite a marca do carro: ');
-    $inicio = readline  ('Digite a data de inicio do pagamento do carro alugado: ');
-    $fim = readline ("Digite o fim do pagamento do carro alugado: ");
+    $modelo = readline ('Digite o modelo do carro: ');
+    $inicio_pagamento = readline  ('Digite a data de inicio do pagamento do carro alugado: ');
+    $fim_pagamento = readline ("Digite o fim do pagamento do carro alugado: ");
 
     $aluguel =[
 
-        'id' => str_split( uniqid(),4)[2],
-        'nome' => $nome,
-        'placa' => $placa,
+        'nome_cliente' => $nome_cliente,
         'marca' => $marca,
-        'inicio' => $inicio,
-        'fim' => $fim
+        'modelo' => $modelo,
+        'inicio_pagamento' => $inicio_pagamento,
+        'fim_pagamento' => $fim_pagamento
 ];
-    $jsonAlugueis = file_get_contents('./db/alugueis.json');
-    $alugueis = json_decode($jsonAlugueis, true);
-
-    $alugueis[] = $aluguel;
-    
-    $json = json_encode ($alugueis, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE);
-    file_put_contents('./db/alugueis.json', $json);
+    $pdo->query("INSERT INTO alugueis (nome_cliente, marca, modelo, inicio_pagamento, fim_pagamento)
+                 VALUES ('$nome_cliente', '$marca', '$modelo', '$inicio_pagamento', '$fim_pagamento')");
         
-    echo "Carro alugado em nome de " .  $aluguel['nome'] . "!" . "  ". "Id: " . $aluguel['id'] . "\n";
+     echo "Carro alugado!" . "\n";
 }
 
    function ListarAlugueis()
 {
-    $jsonAlugueis = file_get_contents('./db/alugueis.json');
-    $alugueis = json_decode($jsonAlugueis, true);
+    $pdo = conn();
+    
+    $pdo->query("SELECT nome_cliente, marca, modelo, inicio_pagamento, fim_pagamento FROM alugueis");
 
-    echo "-------------------------------------------------------------------------------------------------------------------\n";
+     echo "-------------------------------------------------------------------------------------------------------------------\n";
 
-    foreach ($alugueis as $a){
-    echo "Id: " . $a['id'] . "| Nome: " . $a['nome'] . "| Placa: " . $a['placa'] . "| Marca:" . $a['marca']. "| Início do pagamento: " . $a['inicio'] . "| Fim do pagamento: " . $a['fim'] . "\n";
+    foreach ($pdo as $a){
+     echo "Id: " . $a['id'] . "| Nome: " . $a['nome_cliente'] . "| Marca: " . $a['marca'] . "| Modelo:" . $a['modelo']. "| Início do pagamento: " . $a['inicio_pagamento'] . "| Fim do pagamento: " . $a['fim_pagamento'] . "\n";
 }
-    echo "--------------------------------------------------------------------------------------------------------------------\n";
+     echo "--------------------------------------------------------------------------------------------------------------------\n";
 }
 
    function ExcluirAlugueis()
 {
-   $jsonAlugueis = file_get_contents('./db/alugueis.json');
-    $alugueis = json_decode($jsonAlugueis, true);
+   $pdo = conn();
  
     $id = readline ("Digite o id do carro: ");
      
-    $ex_alugueis = [];
-    $cadastrado = false;
+    $fim = $pdo->query("DELETE FROM alugueis WHERE id = '$id'");
 
-    foreach($alugueis as $a){
-    if ($a['id'] != $id){
-    $ex_alugueis[] = $a;
+    if ($fim->rowCount() > 0){
+
+     echo "Aluguel excluído!\n";
 }
     else{
-    $cadastrado = true;
-}
-}
-    if ($cadastrado) {
 
-    $json= json_encode($ex_alugueis, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE);
-    file_put_contents('./db/alugueis.json',$json);
-
-    echo "Aluguel excluído!\n";
-}
-    else{
-    echo "Aluguel não registrado!";
+      echo "Aluguel não registrado!";
 }
 }
